@@ -1,22 +1,8 @@
-from random import randint, shuffle
+from random import shuffle
 from colorama import Fore, Style
 from moduls.functions import generate_unique_numbers
 
 from random import randint
-
-
-class Keg:
-    __num = None
-
-    def __init__(self):
-        self.__num = randint(1, 90)
-
-    @property
-    def num(self):
-        return self.__num
-
-    def __str__(self):
-        return str(self.__num)
 
 
 class Card:
@@ -26,8 +12,10 @@ class Card:
     __data = None
     __emptynum = 0
     __crossednum = -1
+    lose = False
 
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         uniques_count = self.__nums_in_row * self.__rows
         uniques = generate_unique_numbers(uniques_count, 1, 90)
 
@@ -67,53 +55,50 @@ class Card:
         for index, item in enumerate(self.__data):
             if item == num:
                 self.__data[index] = self.__crossednum
-                return
-        raise ValueError(f'Number not in card: {num}')
 
     def closed(self) -> bool:
         return set(self.__data) == {self.__emptynum, self.__crossednum}
 
 
 class Game:
-    __usercard = None
-    __compcard = None
-    __numkegs = 90
+    __usercards = []
+    __compcards = []
     __kegs = []
-    __gameover = False
+    winners = []
+    lose = []
 
-    def __init__(self):
-        self.__usercard = Card()
-        self.__compcard = Card()
-        self.__kegs = generate_unique_numbers(self.__numkegs, 1, 90)
+    def __init__(self, users=1, comps=1):
+        if users + comps < 2:
+            raise ValueError(f'{Fore.RED}[ERROR] Участников игры должно быть не менее 2')
+        for i in range(users):
+            name_user = input(f"Введите имя игрока {i + 1}:{Fore.GREEN} ")
+            print(Style.RESET_ALL, end='')
+            self.__usercards.append(Card(name=name_user))
+        for i in range(comps):
+            self.__compcards.append(Card(name=f"Компьютер {i + 1}"))
 
-    def play_round(self) -> int:
-        """
-        :return:
-        0 - game must go on
-        1 - user wins
-        2 - computer wins
-        """
+        self.__kegs = list(range(1, 91))
+        shuffle(self.__kegs)
 
+    def play_round(self):
         keg = self.__kegs.pop()
-        print(f'Новый бочонок: {keg} (осталось {len(self.__kegs)})')
-        print(f'----- Ваша карточка ------\n{self.__usercard}')
-        print(f'-- Карточка компьютера ---\n{self.__compcard}')
+        print(f'{Fore.LIGHTGREEN_EX}Новый бочонок: {keg} (осталось {len(self.__kegs)}){Style.RESET_ALL}\n')
+        for card in self.__compcards:
+            print(f'Карточка игрока {card.name}\n{card}')
+            card.cross_num(keg)
+            if card.closed():
+                self.winners.append(card.name)
+        for card in self.__usercards:
+            if not card.lose:
+                print(f'{Fore.GREEN}Карточка игрока {card.name}{Style.RESET_ALL}\n{card}')
+                user_answer = input('Зачеркнуть цифру? (y/n)').lower().strip()
+                if ((user_answer == 'y' and not keg in card) or
+                        (user_answer != 'y' and keg in card)):
+                    card.lose = True
+                    self.lose.append(card)
+                    print(f'{Fore.BLUE}Игрок {card.name} выбыл{Style.RESET_ALL}')
+            else:
+                print(f'{Fore.BLUE}Игрок {card.name} выбыл{Style.RESET_ALL}')
 
-        useranswer = input('Зачеркнуть цифру? (y/n)').lower().strip()
-        if useranswer == 'y' and not keg in self.__usercard or \
-           useranswer != 'y' and keg in self.__usercard:
-            return 2
-
-        if keg in self.__usercard:
-            self.__usercard.cross_num(keg)
-            if self.__usercard.closed():
-                return 1
-        if keg in self.__compcard:
-            self.__compcard.cross_num(keg)
-            if self.__compcard.closed():
-                return 2
-
-        return 0
-
-
-
+    def check_gamer(self):
+        return len(self.lose) == len(self.__usercards)
