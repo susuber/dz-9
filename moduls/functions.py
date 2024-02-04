@@ -24,7 +24,7 @@ def stop_and_print(txt=None, clr=True):
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
-def input_col():
+def input_num():
     while True:
         try:
             col_comp = int(input('Введите количество игроков-компьютеров: '))
@@ -46,3 +46,12 @@ def input_col():
             print(f'{Fore.RED}Неверный ввод{Style.RESET_ALL}')
 
     return col_user, col_comp
+
+
+def wins(winners: set | list):
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print(f'\n\n\n{Fore.LIGHTGREEN_EX}{"Победитель:" if len(winners) == 1 else "Победители:"}')
+    for gamer in winners:
+        print(gamer)
+    print('\n\n\n')
+    stop_and_print()

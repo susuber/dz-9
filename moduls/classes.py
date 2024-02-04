@@ -96,9 +96,12 @@ class Game:
                         (user_answer != 'y' and keg in card)):
                     card.lose = True
                     self.lose.append(card)
-                    print(f'{Fore.BLUE}Игрок {card.name} выбыл{Style.RESET_ALL}')
+                    print(f'{Fore.RED}Игрок {card.name} выбыл{Style.RESET_ALL}')
             else:
-                print(f'{Fore.BLUE}Игрок {card.name} выбыл{Style.RESET_ALL}')
+                pass
 
     def check_gamer(self):
         return len(self.lose) == len(self.__usercards)
+
+    def chek_players(self):
+        return set(self.__usercards + self.__compcards).difference(self.lose)
