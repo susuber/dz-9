@@ -51,6 +51,18 @@ class Card:
     def __contains__(self, item):
         return item in self.__data
 
+    def __eq__(self, other):
+        return len(set(self.__data)) == len(set(other.__data))
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __lt__(self, other):
+        return len(set(self.__data)) < len(set(other.__data))
+
+    def __gt__(self, other):
+        return len(set(self.__data)) > len(set(other.__data))
+
     def cross_num(self, num):
         for index, item in enumerate(self.__data):
             if item == num:
@@ -58,6 +70,9 @@ class Card:
 
     def closed(self) -> bool:
         return set(self.__data) == {self.__emptynum, self.__crossednum}
+
+    def get_numbers_in_card(self):
+        return self.__data
 
 
 class Game:
@@ -103,5 +118,50 @@ class Game:
     def check_gamer(self):
         return len(self.lose) == len(self.__usercards)
 
-    def chek_players(self):
-        return set(self.__usercards + self.__compcards).difference(self.lose)
+    def check_players(self) -> set:
+        #return set(self.__usercards + self.__compcards).difference(self.lose)
+        return [item for item in self.__usercards + self.__compcards if item not in self.lose]
+
+    def get_players(self) -> dict:
+        all_players = self.__usercards + self.__compcards
+        num = 0
+        list_players = {}
+        for player in all_players:
+            num += 1
+            list_players[num] = player.name
+
+        return list_players
+
+    def get_player(self, player_num: int):
+        all_players = self.__usercards + self.__compcards
+        return all_players[player_num]
+    
+    def print_players(self):
+        list_players = self.get_players()
+        for player in list_players.items():
+            print(f'{player[0]}: {player[1]}')
+        
+    def get_cards(self):
+        all_players = self.__usercards + self.__compcards
+        self.print_players()
+        while True:
+            try:
+                num_player1 = int(input(f"Введите номер первого игрока для сравнения: {Fore.GREEN}"))
+                print(Style.RESET_ALL, end='')
+            except ValueError:
+                print(f"{Fore.RED}Ошибка ввода{Style.RESET_ALL}")
+            else:
+                break
+
+        while True:
+            try:
+                num_player2 = int(input(f"Введите номер первого игрока для сравнения: {Fore.GREEN}"))
+                print(Style.RESET_ALL, end='')
+            except ValueError:
+                print(f"{Fore.RED}Ошибка ввода{Style.RESET_ALL}")
+            else:
+                break
+        return all_players[num_player1 - 1], all_players[num_player2 - 1]
+
+
+
