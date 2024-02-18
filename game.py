@@ -22,7 +22,7 @@ def main():
         if not game_comp:
             stop_and_print("Нажмите любую клавишу...")
 
-        players = game.chek_players()
+        players = game.check_players()
 
         match len(players):
             case 0:
@@ -43,6 +43,19 @@ def main():
                 break
             else:
                 game_comp = False
+
+        os.system('cls' if os.name == 'nt' else 'clear')
+        comparing = input(f'Сравнить карты 2-х играков?  {Fore.GREEN}')
+        print(Style.RESET_ALL, end='')
+        if comparing.lower() in ['y', 'yes']:
+            comparing_cards = game.get_cards()
+            if comparing_cards[0] == comparing_cards[1]:
+                print('Количество не зачеркнутых номеров одинаково')
+            elif comparing_cards[0] < comparing_cards[1]:
+                print(f'У игрока {comparing_cards[0].name} меньше не зачеркнутых номеров')
+            elif comparing_cards[0] > comparing_cards[1]:
+                print(f'У игрока {comparing_cards[1].name} меньше не зачеркнутых номеров')
+            getch.getch()
 
 
 if __name__ == '__main__':

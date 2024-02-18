@@ -17,6 +17,29 @@ class TestCard(unittest.TestCase):
         card = Card("Maxim")
         self.assertFalse(card.closed())
 
+    def test_eq(self):
+        card_1 = Card(name='Maxim')
+        card_2 = Card(name='Vera')
+        self.assertTrue(card_1 == card_2)
+
+    def test_ne(self):
+        card_1 = Card(name='Maxim')
+        card_2 = Card(name='Vera')
+        self.assertFalse(card_1 != card_2)
+
+    def test_lt(self):
+        card_1 = Card(name='Maxim')
+        card_2 = Card(name='Vera')
+        self.assertFalse(card_1 < card_2)
+
+    def test_gt(self):
+        card_1 = Card(name='Maxim')
+        card_2 = Card(name='Vera')
+        self.assertFalse(card_1 > card_2)
+
+    def test_get_numbers_in_card(self):
+        card = Card(name='Maxim')
+        self.assertEqual(len(card.get_numbers_in_card()), 27)
 
 class TestGame(unittest.TestCase):
     def test_check_gamer(self):
@@ -30,6 +53,16 @@ class TestGame(unittest.TestCase):
     def test_loss(self):
         game = Game(users=0, comps=2)
         self.assertListEqual(game.lose, [])
+
+    def test_get_players2(self):
+        game = Game(users=0, comps=2)
+        players = game.get_players()
+        self.assertEqual(players[1], 'Компьютер 1')
+
+    def test_get_players3(self):
+        game = Game(users=0, comps=2)
+        players = game.get_players()
+        self.assertEqual(players[2], 'Компьютер 2')
 
 
 if __name__ == '__main__':

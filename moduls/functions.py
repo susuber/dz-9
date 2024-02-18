@@ -24,6 +24,15 @@ def stop_and_print(txt=None, clr=True):
         os.system('cls' if os.name == 'nt' else 'clear')
 
 
+def comparing_cards(card1: object, card2: object) -> str:
+    if card1 == card2:
+        return 'Количество номеров равно'
+    elif card1 > card2:
+        return f'У игрока {card1} больше не зачеркнутых номеров'
+    elif card1 < card2:
+        return f'У игрока {card2} больше не зачеркнутых номеров'
+
+
 def input_num():
     while True:
         try:
